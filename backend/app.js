@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
@@ -17,5 +18,14 @@ const person = require("./routes/personRoutes");
 app.use("/api/v1/person", person);
 
 app.use(errorMiddlerware);
+
+app.use(express.static(path.join(__dirname, "../frontend/build")));
+app.get("*", function (req, res) {
+  res.sendFile(
+    path.join(__dirname, "../frontend/build/index.html", function (err) {
+      res.status(500).send(err);
+    })
+  );
+});
 
 module.exports = app;
