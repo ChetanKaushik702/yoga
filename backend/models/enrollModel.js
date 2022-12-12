@@ -17,6 +17,10 @@ const enrollSchema = new mongoose.Schema({
     enum: ["completed", "pending"],
     default: "pending",
   },
+  enrolledAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 module.exports = mongoose.model("enroll", enrollSchema);

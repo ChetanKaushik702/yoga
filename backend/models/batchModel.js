@@ -11,6 +11,10 @@ const batchSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Please enter fee amount"],
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 module.exports = mongoose.model("batch", batchSchema);

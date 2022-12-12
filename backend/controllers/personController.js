@@ -20,6 +20,7 @@ const registerPerson = AsyncErrorHandler(async (req, res, next) => {
     district,
     country,
     password,
+    batch,
   } = req.body;
 
   const address = {
@@ -30,6 +31,11 @@ const registerPerson = AsyncErrorHandler(async (req, res, next) => {
     country,
   };
 
+  const doesBatchExist = await Batch.findOne({ schedule: batch });
+  if (!doesBatchExist) {
+    return next(new ErrorHandler(`${batch} batch doesn't exist`, 400));
+  }
+
   const person = await Person.create({
     fName,
     lName,
@@ -39,6 +45,11 @@ const registerPerson = AsyncErrorHandler(async (req, res, next) => {
     dob,
     phone,
     password,
+  });
+
+  await Enroll.create({
+    person: person._id,
+    batch: doesBatchExist._id,
   });
 
   sendToken(person, 201, res);
@@ -59,12 +70,29 @@ const completePayment = AsyncErrorHandler(async (req, res, next) => {
   /* 
     payment integration code
   */
-  const { personId, batchId } = req.body;
-  const enroll = await Enroll.create({
-    personId,
-    batchId,
-    feeStatus: "completed",
-  });
+  const { personId, batch } = req.body;
+  if (!personId || !batch) {
+    return next(
+      new ErrorHandler("Please provide personId and batch both", 400)
+    );
+  }
+
+  const person = await Person.findOne({ _id: personId });
+  const batchExist = await Batch.findOne({ schedule: batch });
+
+  if (!person || !batchExist) {
+    return next(new ErrorHandler("Person or batch does not exist", 404));
+  }
+
+  await Enroll.findOneAndUpdate(
+    {
+      person: personId,
+    },
+    { feeStatus: "completed" }
+  );
+
+  const enroll = await Enroll.findOne({ person: personId });
+
   res.status(200).json({
     success: true,
     enroll,
@@ -78,24 +106,24 @@ const changeBatch = AsyncErrorHandler(async (req, res, next) => {
     return next(
       new ErrorHandler(
         `You can't change the batch in between. Please try again on the 1st of next month.`,
-        400
+        403
       )
     );
   }
-  const { personId, newBatchId } = req.body;
+  const { personId, newBatch } = req.body;
   console.log(req.body);
-  if (!personId || !newBatchId) {
+  if (!personId || !newBatch) {
     return next(
-      new ErrorHandler("Please enter both personId and newBatchId", 400)
+      new ErrorHandler("Please enter both personId and newBatch", 400)
     );
   }
   const person = await Person.findOne({ _id: personId });
-  const batch = await Batch.findOne({ _id: newBatchId });
+  const batch = await Batch.findOne({ schedule: newBatch });
   if (!person || !batch) {
     return next(new ErrorHandler("Incorrect personId or batchId", 400));
   } else {
     const prevBatch = await Enroll.findOne({ person: personId });
-    prevBatch.batch = newBatchId;
+    prevBatch.batch = newBatch;
     await prevBatch.save();
 
     res.status(200).json({

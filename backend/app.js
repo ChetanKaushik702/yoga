@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const app = express();
@@ -8,6 +9,7 @@ const errorMiddlerware = require("./middlewares/error");
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 // setting up routes
 const person = require("./routes/personRoutes");
