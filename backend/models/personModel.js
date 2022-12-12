@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // addressSchema
 const addressSchema = new mongoose.Schema({
@@ -62,6 +64,12 @@ const personSchema = new mongoose.Schema({
     required: [true, "Please enter your email"],
     validate: [validator.isEmail, "Please enter a valid email-id"],
   },
+  password: {
+    type: String,
+    selected: false,
+    required: [true, "Please enter your password"],
+    minlength: [8, "Password must not have less than 8 characters"],
+  },
   phone: {
     type: String,
     validate(value) {
@@ -69,6 +77,35 @@ const personSchema = new mongoose.Schema({
     },
   },
   address: addressSchema,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
+
+personSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  } else {
+    next();
+  }
+});
+
+// generate JWT token
+personSchema.methods.getJWTToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+// checking password matching
+personSchema.methods.comparePassword = function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
+};
 
 module.exports = mongoose.model("person", personSchema);
