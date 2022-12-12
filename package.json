@@ -11,7 +11,7 @@
     "server-install": "npm install",
     "client-install": "cd frontend && npm install",
     "install-all": "concurrently \"npm run server-install\" \"npm run client-install\"",
-    "prod": "concurrently \"npm run start\" \"npm run client\""
+    "prod": "concurrently \"npm run install-all\" \"npm run start\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
