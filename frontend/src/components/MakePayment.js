@@ -8,13 +8,10 @@ const MakePayment = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = await axios.post(
-      "http://localhost:5000/api/v1/person/makePayment",
-      {
-        personId,
-        batch,
-      }
-    );
+    const data = await axios.post("/api/v1/person/makePayment", {
+      personId,
+      batch,
+    });
 
     if (data.data.success) {
       alert("successfully made payment");

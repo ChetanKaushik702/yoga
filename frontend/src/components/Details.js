@@ -18,7 +18,7 @@ const Details = (props) => {
   const [dob, setDOB] = useState("");
 
   async function temp() {
-    return await axios.post("http://localhost:5000/api/v1/person/register", {
+    return await axios.post("/api/v1/person/register", {
       fName,
       lName,
       email,
