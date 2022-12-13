@@ -8,10 +8,13 @@ const MakePayment = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = await axios.post("/api/v1/person/makePayment", {
-      personId,
-      batch,
-    });
+    const data = await axios.post(
+      "https://ck-yoga.onrender.com/api/v1/person/makePayment",
+      {
+        personId,
+        batch,
+      }
+    );
 
     if (data.data.success) {
       alert("successfully made payment");

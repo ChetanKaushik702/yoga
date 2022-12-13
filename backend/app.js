@@ -24,4 +24,6 @@ app.use(errorMiddlerware);
 //   res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 // });
 
+// console.log(path.join(__dirname, "../frontend/build", "index.html"));
+
 module.exports = app;

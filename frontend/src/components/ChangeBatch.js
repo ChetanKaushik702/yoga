@@ -8,10 +8,13 @@ const ChangeBatch = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const data = await axios.put("/api/v1/person/changeBatch", {
-      personId,
-      newBatch,
-    });
+    const data = await axios.put(
+      "https://ck-yoga.onrender.com/api/v1/person/changeBatch",
+      {
+        personId,
+        newBatch,
+      }
+    );
 
     if (data.data.success) {
       alert("successfully changed batch");

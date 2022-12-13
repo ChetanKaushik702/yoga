@@ -18,21 +18,24 @@ const Details = (props) => {
   const [dob, setDOB] = useState("");
 
   async function temp() {
-    return await axios.post("/api/v1/person/register", {
-      fName,
-      lName,
-      email,
-      password,
-      phone,
-      city,
-      state,
-      district,
-      pincode,
-      country,
-      gender,
-      batch,
-      dob,
-    });
+    return await axios.post(
+      "https://ck-yoga.onrender.com/api/v1/person/register",
+      {
+        fName,
+        lName,
+        email,
+        password,
+        phone,
+        city,
+        state,
+        district,
+        pincode,
+        country,
+        gender,
+        batch,
+        dob,
+      }
+    );
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
